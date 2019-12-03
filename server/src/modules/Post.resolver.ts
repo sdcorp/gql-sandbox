@@ -9,6 +9,7 @@ export class PostResolver {
     const posts = await Post.find();
     return posts;
   }
+
   @Mutation(() => Post)
   async create(@Arg('title') title: string, @Arg('text') text: string) {
     const newPost = await Post.create({ title, text }).save();
