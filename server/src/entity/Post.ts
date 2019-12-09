@@ -1,8 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
 
 @ObjectType()
-@Entity()
+@Entity({ name: 'posts' })
 export class Post extends BaseEntity {
   @Field(() => ID)
   @PrimaryGeneratedColumn()
@@ -15,4 +15,12 @@ export class Post extends BaseEntity {
   @Field()
   @Column()
   text: string;
+
+  @Field()
+  @CreateDateColumn()
+  createdAt: string;
+
+  @Field()
+  @UpdateDateColumn()
+  updatedAt: string;
 }

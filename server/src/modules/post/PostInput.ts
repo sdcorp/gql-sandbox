@@ -9,3 +9,12 @@ export class PostUpdateInput implements Partial<Post> {
   @Field({ nullable: true })
   text?: string;
 }
+
+@InputType()
+export class PostCreateInput implements Partial<Post> {
+  @Field()
+  title: string;
+
+  @Field()
+  text: string;
+}

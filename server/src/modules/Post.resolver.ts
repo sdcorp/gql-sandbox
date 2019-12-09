@@ -1,6 +1,6 @@
 import { Query, Resolver, Mutation, Arg, Int } from 'type-graphql';
 import { Post } from '../entity/Post';
-import { PostUpdateInput } from './post/PostInput';
+import { PostUpdateInput, PostCreateInput } from './post/PostInput';
 
 @Resolver()
 export class PostResolver {
@@ -11,8 +11,8 @@ export class PostResolver {
   }
 
   @Mutation(() => Post)
-  async create(@Arg('title') title: string, @Arg('text') text: string) {
-    const newPost = await Post.create({ title, text }).save();
+  async create(@Arg('input') input: PostCreateInput) {
+    const newPost = await Post.create(input).save();
     return newPost;
   }
 
