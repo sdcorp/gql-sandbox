@@ -1,8 +1,9 @@
-import { Query, Resolver, Mutation, Arg, Ctx } from 'type-graphql';
+import { Query, Resolver, Mutation, Arg, Ctx, UseMiddleware } from 'type-graphql';
 import bcrypt from 'bcryptjs';
 import { UserInput } from './auth/Userinput';
 import { User } from '../entity/User';
 import { IContext } from '../types/Context';
+import { isAuth } from '../middleware/isAuth';
 
 @Resolver()
 export class UserResolver {
@@ -11,12 +12,10 @@ export class UserResolver {
     return 'hi!';
   }
 
+  @UseMiddleware(isAuth)
   @Query(() => User)
   async me(@Ctx() ctx: IContext): Promise<User | undefined> {
-    if (!ctx.req.session!.userId) {
-      return;
-    }
-    return User.findOne(ctx.req.session!.userId);
+    return User.findOne({ where: { id: ctx.userId }, relations: ['posts'] });
   }
 
   @Mutation(() => User)
@@ -43,7 +42,9 @@ export class UserResolver {
     }
 
     ctx.req.session!.userId = user.id;
-
+    // better solution
+    // https://github.com/MichalLytek/type-graphql/blob/v0.17.5/examples/middlewares-custom-decorators/decorators/current-user.ts
+    ctx.userId = user.id;
     return user;
   }
 
@@ -53,6 +54,7 @@ export class UserResolver {
       ctx.req.session!.destroy(err => {
         if (err) return rej(false);
         ctx.res.clearCookie('qid');
+        ctx.userId = undefined;
         return res(true);
       })
     );

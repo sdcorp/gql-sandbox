@@ -1,5 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  BaseEntity,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+} from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
+import { User } from './User';
 
 @ObjectType()
 @Entity({ name: 'posts' })
@@ -23,4 +32,11 @@ export class Post extends BaseEntity {
   @Field()
   @UpdateDateColumn()
   updatedAt: string;
+
+  @Field(() => User, { nullable: true })
+  @ManyToOne(
+    () => User,
+    user => user.posts
+  )
+  author: User;
 }
